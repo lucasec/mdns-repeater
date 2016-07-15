@@ -50,7 +50,7 @@ struct if_sock {
 int server_sockfd = -1;
 
 int num_socks = 0;
-struct if_sock socks[5];
+struct if_sock *socks;
 
 #define PACKET_SIZE 65536
 void *pkt_data = NULL;
@@ -345,7 +345,8 @@ int main(int argc, char *argv[]) {
 
 	parse_opts(argc, argv);
 
-	if ((argc - optind) <= 1) {
+	int expected_socks = argc - optind;
+	if (expected_socks <= 1) {
 		show_help(argv[0]);
 		log_message(LOG_ERR, "error: at least 2 interfaces must be specified");
 		exit(2);
@@ -361,6 +362,13 @@ int main(int argc, char *argv[]) {
 			log_message(LOG_ERR, "already running as pid %d", running_pid);
 			exit(1);
 		}
+	}
+
+	// allocate socks array
+	socks = malloc(sizeof(struct if_sock) * expected_socks);
+	if (!socks) {
+		log_message(LOG_ERR, "cannot allocate memory for requested number of interfaces");
+		exit(3);
 	}
 
 	// create receiving socket
@@ -459,8 +467,12 @@ end_main:
 	if (server_sockfd >= 0)
 		close(server_sockfd);
 
-	for (i = 0; i < num_socks; i++) 
-		close(socks[i].sockfd);
+	if (socks != NULL) {
+		for (i = 0; i < num_socks; i++) 
+			close(socks[i].sockfd);
+
+		free(socks);
+	}
 
 	// remove pid file if it belongs to us
 	if (already_running() == getpid())
