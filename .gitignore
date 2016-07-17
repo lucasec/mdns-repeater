@@ -1,0 +1,4 @@
+*.o
+_version
+mdns-repeater
+mdns-repeater-*.zip 
