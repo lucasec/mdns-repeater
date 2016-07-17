@@ -1,5 +1,8 @@
 mdns-repeater
 ==============
+
+[![Build Status](https://travis-ci.org/lucasec/mdns-repeater.svg?branch=master)](https://travis-ci.org/lucasec/mdns-repeater)
+
 mdns-repeater is a Multicast DNS repeater for Linux. Multicast DNS uses the 224.0.0.51 address, which is "administratively scoped" and does not leave the subnet.
 
 mdns-repeater provides a "keep it simple, stupid" solution to discovering mDNS services across subnets, and is primarily intended for router distributions and software firewalls.
